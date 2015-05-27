@@ -33,7 +33,9 @@ vector<string> loadFile(string filename)
 }
 
 
-
+/**
+ * 	@brief Apresentacao da informacao adicionada, apagada e substituida entre os dois ficheiros.
+ */
 void displayDiff(std::vector<string> & X, std::vector<string> & Y, std::vector<string> & result, vector<pair<int, int> > pairs)
 {
 
