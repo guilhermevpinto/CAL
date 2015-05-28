@@ -15,7 +15,7 @@ class LCSTable
 {
 	int m;
 	int n;
-	int* data;
+	int *data;
 
 public:
 
@@ -57,7 +57,4 @@ public:
 			}
 	}
 };
-
-
-
 #endif /* LCSTABLE_H_ */

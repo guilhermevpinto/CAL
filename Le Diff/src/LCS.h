@@ -10,11 +10,62 @@
 
 #include "LCSTable.h"
 #include <vector>
+#include <list>
 #include <utility>
+#include <algorithm>
+
+typedef bool (*StringCompare)(const std::string &, const std::string &);
+
+std::vector<std::vector<int> > init(const std::vector<std::string> & X, const std::vector<std::string> & Y, StringCompare compare)
+{
+	std::vector<std::vector<int> > table(X.size() + 1, std::vector<int>(Y.size()+1, 0));
+
+	for(size_t i = 0; i <= X.size(); ++i)
+		for(size_t j = 1; j <= Y.size(); ++j)
+		{
+			if(compare(X[i-1], Y[j-1]))
+				table[i][j] = table[i-1][j-1] + 1;
+			else
+				table[i][j] = std::max(table[i-1][j], table[i][j-1]);
+		}
+
+	return table;
+}
+
+std::list<std::pair<int, int> > backTrack(const std::vector<std::vector<int> > & table, const std::vector<std::string> & X, const std::vector<std::string> & Y, StringCompare compare)
+{
+	std::list<std::pair<int, int> > pairs;
+
+	size_t i = X.size();
+	size_t j = Y.size();
+
+	while (i > 0 && j > 0)
+	{
+		if(compare(X[i - 1], Y[j - 1]))
+		{
+			pairs.push_front(std::make_pair(i, j));
+			--i;
+			--j;
+		}
+		else if(table.at(i).at(j - 1) > table.at(i - 1).at(j))
+			--j;
+		else
+			--i;
+	}
+
+	return pairs;
+}
+
+std::vector<std::pair<int,int> > lcs(const std::vector<std::string> & X, const std::vector<std::string> & Y, StringCompare compare)
+{
+	std::vector<std::vector<int> > table = init(X, Y, compare);
+
+	return backTrack(table, X, Y, compare);
+}
+
 
 class LCS
 {
-
 	void backTrack(const LCSTable & table, const std::vector<std::string> & X, const std::vector<std::string> & Y, int i, int j, std::vector<std::string> & result)
 	{
 		if(i == 0 || j == 0)
@@ -24,7 +75,7 @@ class LCS
 		{
 			backTrack(table, X, Y, i-1, j-1, result);
 			result.push_back(X[i-1]);
-			pairs.push_back(std::make_pair(i-1, j-1));
+			pairs.push_back(std::make_pair(i, j));
 			return;
 		}
 
@@ -43,7 +94,6 @@ public:
 		LCSTable table;
 		table.init(X, Y);
 		backTrack(table, X, Y, X.size(), Y.size(), result);
-
 	}
 };
 

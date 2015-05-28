@@ -38,127 +38,111 @@ vector<string> loadFile(string filename)
  */
 void displayDiff(std::vector<string> & X, std::vector<string> & Y, std::vector<string> & result, vector<pair<int, int> > pairs)
 {
-	unsigned int i = 0;
-	unsigned int j = 0;
+	unsigned int i = 0; //index of X
+	unsigned int j = 0;	//index of Y
 
-	for(size_t k = 0; k < pairs.size(); ++k)
+	unsigned int diffI;
+	unsigned int diffJ;
+
+	for(size_t k = 0; k < pairs.size(); ++k, i += diffI, j += diffJ)
 	{
-		int diffI = pairs[k].first - i;
-		int diffJ = pairs[k].second - j;
+		diffI = pairs[k].first - i;
+		diffJ = pairs[k].second - j;
 
-		if(diffI > diffJ)
+		if(diffI == 1)
 		{
-			if(diffJ == 1) //means that lines from X were deleted
-			{
-				if(diffI > 2)
-					cout << i << "d" << i+1 << "," << pairs[k].first << endl;
-				else
-					cout << i << "d" << pairs[k].first << endl;
+			if(diffJ == 1)
+				continue;
 
-				for(int p = i; p < pairs[k].first; ++p)
-					cout << "< " << X[p] << endl;
-			}
-			else //means that lines on X were swapped for other lines of Y
-			{
-				if(diffI > 2)
-					cout << i+2 << "," << pairs[k].first;
-				else
-					cout << i+2;
-
-				cout << "c";
-
-				if(diffJ > 2)
-					cout << j+2 << "," << pairs[k].second+2 << endl;
-				else
-					cout << j+2 << endl;
-
-				for(int p = i+1; p < pairs[k].first; ++p)
-					cout << "< " << X[p] << endl;
-
-				cout << "---" << endl;
-
-				for(int p = j+1; p < pairs[k].second; ++p)
-					cout << "> " << Y[p] << endl;
-			}
-		}
-		else if(diffI < diffJ)
-		{
-			if(diffI == 0) //means that lines of Y were added
-			{
-				if(diffJ > 2)
-					cout << i << "a" << j+1 << "," << pairs[k].second << endl;
-				else
-					cout << i << "a" << j+1 << endl;
-
-				for(int p = j; p < pairs[k].second; ++p)
-					cout << "> " << Y[p] << endl;
-			}
-			else
-			{
-				if(diffI > 2)
-					cout << i+2 << "," << pairs[k].first;
-				else
-					cout << i+2;
-
-				cout << "c";
-
-				if(diffJ > 2)
-					cout << j+2 << "," << pairs[k].second+2 << endl;
-				else
-					cout << j+2 << endl;
-
-				for(int p = i+1; p < pairs[k].first; ++p)
-					cout << "< " << X[p] << endl;
-
-				cout << "---" << endl;
-
-				for(int p = j+1; p < pairs[k].second; ++p)
-					cout << "> " << Y[p] << endl;
-			}
-		}
-		else if(diffI == diffJ && diffI > 1)
-		{
-			if(diffI > 2)
-				cout << i+2 << "," << pairs[k].first;
-			else
-				cout << i+2;
-
-			cout << "c";
+			cout << i << "a" << j + 1;
 
 			if(diffJ > 2)
-				cout << j+2 << "," << pairs[k].second+2 << endl;
-			else
-				cout << j+2 << endl;
+				cout << "," << pairs[k].second - 1;
+			cout << endl;
 
-			for(int p = i+1; p < pairs[k].first; ++p)
+			for(size_t p = j; p < pairs[k].second - 1; ++p)
+				cout << "> " << Y[p] << endl;
+		}
+		else if(diffJ == 1)
+		{
+			cout << i + 1;
+			if(diffI > 2)
+				cout << "," << pairs[k].first - 1;
+			cout << "d" << j << endl;
+
+			for(size_t p = i; p < pairs[k].first - 1; ++p)
+				cout << "< " << X[p] << endl;
+		}
+		else
+		{
+			cout << i+1;
+			if(diffI > 2)
+				cout << "," << pairs[k].first -1;
+			cout << "c" << j+1;
+			if(diffJ > 2)
+				cout << "," << pairs[k].second - 1;
+			cout << endl;
+
+			for(size_t p = i; p < pairs[k].first - 1; ++p)
 				cout << "< " << X[p] << endl;
 
 			cout << "---" << endl;
 
-			for(int p = j+1; p < pairs[k].second; ++p)
+			for(size_t p = j; p < pairs[k].second - 1; ++p)
+				cout << "> " << Y[p] << endl;
+
+		}
+	}
+
+
+	diffI = X.size() - i;
+	diffJ = Y.size() - j;
+
+	if(diffI > 0)
+	{
+		if(diffJ > 0)
+		{
+			cout << i+1;
+			if(diffI > 2)
+				cout << "," << X.size();
+			cout << "c" << j+1;
+			if(diffJ > 2)
+				cout << "," << Y.size();
+			cout << endl;
+
+			for(size_t p = i; p < X.size(); ++p)
+				cout << "< " << X[p] << endl;
+
+			cout << "---" << endl;
+
+			for(size_t p = j; p < Y.size(); ++p)
 				cout << "> " << Y[p] << endl;
 		}
+		else
+		{
+			cout << i + 1;
+			if(diffI > 2)
+				cout << "," << X.size();
+			cout << "d" << j << endl;
 
-
-		i += diffI;
-		j += diffJ;
-
+			for(size_t p = i; p < X.size(); ++p)
+				cout << "< " << X[p] << endl;
+		}
 	}
-
-	if(i < X.size()-1)
+	else if(diffJ > 0)
 	{
-		cout << i+1 << "d" << i+2 << "," << X.size() << endl;
+		cout << i << "a" << j + 1;
 
-		for(size_t p = i+1; p < X.size(); ++p)
-			cout << "< " << X[p] << endl;
-	}
-	else if(j < Y.size()-1)
-	{
-		cout << i+1 << "a" << j+2 << "," << Y.size() << endl;
+		if(diffJ > 2)
+			cout << "," << Y.size();
+		cout << endl;
 
-		for(size_t p = j+1; p < Y.size(); ++p)
+		for(size_t p = j; p < Y.size(); ++p)
 			cout << "> " << Y[p] << endl;
 	}
+/*
+	for(size_t k = 0; k < pairs.size(); ++k)
+		cout << pairs[k].first << ", " << pairs[k].second << endl;*/
 }
 
 int main()
@@ -172,9 +156,9 @@ int main()
 
 	displayDiff(X, Y, result, lcs.pairs);
 
-	for(size_t k = 0; k < lcs.pairs.size(); k++)
-		cout << lcs.pairs[k].first << ", " << lcs.pairs[k].second << endl;
-
+	/*for(size_t k = 0; k < result.size(); k++)
+		cout << result[k] << endl;
+*/
 	return 0;
 }
 
