@@ -24,7 +24,7 @@ std::vector<std::vector<int> > init(const std::vector<std::string> & X, const st
 	{
 		for(size_t j = 1; j <= Y.size(); ++j)
 		{
-			if(X[i-1].compare( Y[j-1]) == 0)
+			if(compare(X[i-1], Y[j-1]))
 				table[i][j] = table[i-1][j-1] + 1;
 			else
 				table[i][j] = std::max(table[i-1][j], table[i][j-1]);
@@ -46,7 +46,7 @@ std::list<std::pair<int, int> > backTrack(const std::vector<std::vector<int> > &
 
 	while (i > 0 && j > 0)
 	{
-		if(X[i-1].compare(Y[j-1]) == 0)
+		if(compare(X[i-1], Y[j-1]))
 		{
 			pairs.push_front(std::make_pair(i, j));
 			--i;

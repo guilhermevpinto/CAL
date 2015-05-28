@@ -151,7 +151,9 @@ void displayDiff(std::vector<string> & X, std::vector<string> & Y, list<pair<int
 
 bool compare(const string &X, const string &Y)
 {
-	return X.compare(Y);
+	if (X.compare(Y) == 0)
+		return true;
+	else return false;
 }
 
 int main()
