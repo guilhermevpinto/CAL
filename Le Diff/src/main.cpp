@@ -156,11 +156,23 @@ bool compare(const string &X, const string &Y)
 	else return false;
 }
 
+bool Icompare(const string &X, const string &Y)
+{
+	if (Y.size() != X.size())
+		return false;
+
+	for (unsigned int i = 0; i < X.size(); ++i)
+		if (tolower(X[i]) != tolower(Y[i]))
+			return false;
+
+	return true;
+}
+
 int main()
 {
 	vector<string> X = loadFile("test1.txt");
 	vector<string> Y = loadFile("test2.txt");
-	StringCompare comp = &compare;
+	StringCompare comp = &Icompare;
 	list<pair<int,int> > pairs = lcs(X, Y, comp);
 
 	displayDiff(X, Y, pairs);

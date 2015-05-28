@@ -28,11 +28,7 @@ std::vector<std::vector<int> > init(const std::vector<std::string> & X, const st
 				table[i][j] = table[i-1][j-1] + 1;
 			else
 				table[i][j] = std::max(table[i-1][j], table[i][j-1]);
-
-			//std::cout << table[i][j] << " ";
 		}
-
-		//std::cout << "\n";
 	}
 	return table;
 }
