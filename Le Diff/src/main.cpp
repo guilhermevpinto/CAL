@@ -168,11 +168,40 @@ bool Icompare(const string &X, const string &Y)
 	return true;
 }
 
+bool Wcompare(const string &X, const string &Y)
+{
+	unsigned int i = 0;
+	unsigned int j = 0;
+
+	while(i < X.size() && j < Y.size())
+	{
+		if(isspace(X[i]))
+		{
+			++i;
+			continue;
+		}
+
+		if(isspace(Y[j]))
+		{
+			++j;
+			continue;
+		}
+
+		if(X[i] != Y[j])
+			return false;
+
+		++i;
+		++j;
+	}
+
+	return i == X.size() && j == Y.size();
+}
+
 int main()
 {
 	vector<string> X = loadFile("test1.txt");
 	vector<string> Y = loadFile("test2.txt");
-	StringCompare comp = &Icompare;
+	StringCompare comp = &Wcompare;
 	list<pair<int,int> > pairs = lcs(X, Y, comp);
 
 	displayDiff(X, Y, pairs);
