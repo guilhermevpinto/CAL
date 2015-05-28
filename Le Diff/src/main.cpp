@@ -36,7 +36,7 @@ vector<string> loadFile(string filename)
 /**
  * 	@brief Apresentacao da informacao adicionada, apagada e substituida entre os dois ficheiros.
  */
-void displayDiff(std::vector<string> & X, std::vector<string> & Y, std::vector<string> & result, vector<pair<int, int> > pairs)
+void displayDiff(std::vector<string> & X, std::vector<string> & Y, list<pair<int, int> > pairs)
 {
 	unsigned int i = 0; //index of X
 	unsigned int j = 0;	//index of Y
@@ -44,10 +44,12 @@ void displayDiff(std::vector<string> & X, std::vector<string> & Y, std::vector<s
 	unsigned int diffI;
 	unsigned int diffJ;
 
-	for(size_t k = 0; k < pairs.size(); ++k, i += diffI, j += diffJ)
+	list<pair<int,int> >::iterator it = pairs.begin();
+
+	for(it; it != pairs.end(); it++, i += diffI, j += diffJ)
 	{
-		diffI = pairs[k].first - i;
-		diffJ = pairs[k].second - j;
+		diffI = it->first - i;
+		diffJ = it->second - j;
 
 		if(diffI == 1)
 		{
@@ -57,38 +59,38 @@ void displayDiff(std::vector<string> & X, std::vector<string> & Y, std::vector<s
 			cout << i << "a" << j + 1;
 
 			if(diffJ > 2)
-				cout << "," << pairs[k].second - 1;
+				cout << "," << it->second - 1;
 			cout << endl;
 
-			for(size_t p = j; p < pairs[k].second - 1; ++p)
+			for(size_t p = j; p < it->second - 1; ++p)
 				cout << "> " << Y[p] << endl;
 		}
 		else if(diffJ == 1)
 		{
 			cout << i + 1;
 			if(diffI > 2)
-				cout << "," << pairs[k].first - 1;
+				cout << "," << it->first - 1;
 			cout << "d" << j << endl;
 
-			for(size_t p = i; p < pairs[k].first - 1; ++p)
+			for(size_t p = i; p < it->first - 1; ++p)
 				cout << "< " << X[p] << endl;
 		}
 		else
 		{
 			cout << i+1;
 			if(diffI > 2)
-				cout << "," << pairs[k].first -1;
+				cout << "," << it->first -1;
 			cout << "c" << j+1;
 			if(diffJ > 2)
-				cout << "," << pairs[k].second - 1;
+				cout << "," << it->second - 1;
 			cout << endl;
 
-			for(size_t p = i; p < pairs[k].first - 1; ++p)
+			for(size_t p = i; p < it->first - 1; ++p)
 				cout << "< " << X[p] << endl;
 
 			cout << "---" << endl;
 
-			for(size_t p = j; p < pairs[k].second - 1; ++p)
+			for(size_t p = j; p < it->second - 1; ++p)
 				cout << "> " << Y[p] << endl;
 
 		}
@@ -141,20 +143,25 @@ void displayDiff(std::vector<string> & X, std::vector<string> & Y, std::vector<s
 			cout << "> " << Y[p] << endl;
 	}
 /*
-	for(size_t k = 0; k < pairs.size(); ++k)
-		cout << pairs[k].first << ", " << pairs[k].second << endl;*/
+
+	list<pair<int,int> >::iterator it = pairs.begin();
+	for(it; it != pairs.end(); it++)
+		cout << it->first << ", " << it->second << endl;*/
+}
+
+bool compare(const string &X, const string &Y)
+{
+	return X.compare(Y);
 }
 
 int main()
 {
-	LCS lcs;
 	vector<string> X = loadFile("test1.txt");
 	vector<string> Y = loadFile("test2.txt");
-	vector<string> result;
+	StringCompare comp = &compare;
+	list<pair<int,int> > pairs = lcs(X, Y, comp);
 
-	lcs.findLCS(X, Y, result);
-
-	displayDiff(X, Y, result, lcs.pairs);
+	displayDiff(X, Y, pairs);
 
 	/*for(size_t k = 0; k < result.size(); k++)
 		cout << result[k] << endl;
