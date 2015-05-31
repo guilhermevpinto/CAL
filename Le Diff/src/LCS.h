@@ -15,6 +15,7 @@
 #include <iostream>
 
 typedef bool (*StringCompare)(const std::string &, const std::string &);
+typedef void (*OutputDiff) (std::vector<std::string> &X, std::vector<std::string> &Y, std::list<std::pair<int, int> > pairs);
 
 std::vector<std::vector<int> > init(const std::vector<std::string> & X, const std::vector<std::string> & Y, StringCompare compare)
 {
