@@ -132,11 +132,15 @@ void standardOutput(vector<string> &X, vector<string> &Y, list<pair<int, int> > 
 
 void QOutput(vector<string> &X, vector<string> &Y, list<pair<int, int> > pairs)
 {
-	if(pairs.size() != 0)
+	if(pairs.size() != X.size() || pairs.size() != Y.size())
 		cout << "Files " + file1 + " and " + file2 + " differ\n";
 }
 
 void BOutput(vector<string> &X, vector<string> &Y, list<pair<int, int> > pairs)
+{
+}
+
+void QBOutput(vector<string> &X, vector<string> &Y, list<pair<int, int> > pairs)
 {
 }
 
@@ -230,18 +234,20 @@ int main()
 
 	for(size_t i = 1; i < flags.size(); ++i)
 	{
-		if(flags[i] == 'q' || flags[i] == 'Q')
+		if(flags[i] == 'q')
 			Qflag = true;
-		else if (flags[i] == 'i' || flags[i] == 'I')
+		else if (flags[i] == 'i')
 			Iflag = true;
-		else if(flags[i] == 'w' || flags[i] == 'W')
+		else if(flags[i] == 'w')
 			Wflag = true;
-		else if (flags[i] == 'b' || flags[i] == 'B')
+		else if (flags[i] == 'B')
 			Bflag = true;
 	}
 
 
-	if(Qflag)
+	if(Qflag && Bflag)
+		output = &QBOutput;
+	else if(Qflag)
 		output = &QOutput;
 	else if (Bflag)
 		output = &BOutput;
