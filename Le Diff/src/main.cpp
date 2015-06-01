@@ -12,7 +12,7 @@
 using namespace std;
 
 vector<string> loadFile(string filename)
-								{
+																		{
 	vector<string> result;
 
 	ifstream file (filename.c_str());
@@ -30,7 +30,7 @@ vector<string> loadFile(string filename)
 		cout << "Failed to open " << filename << endl;
 
 	return result;
-}
+																		}
 
 void standardAdd(unsigned int i, unsigned int j, int diffJ, unsigned int final_line, vector<string> &Y)
 {
@@ -86,8 +86,8 @@ void standardOutput(const string &file1, const string &file2, vector<string> &X,
 	unsigned int diffJ;
 
 	for(list<pair<int,int> >::iterator it = pairs.begin();
-		it != pairs.end();
-		it++, i += diffI, j += diffJ)
+			it != pairs.end();
+			it++, i += diffI, j += diffJ)
 	{
 		diffI = it->first - i;
 		diffJ = it->second - j;
@@ -126,17 +126,155 @@ void QOutput(const string &file1, const string &file2, vector<string> &X, vector
 
 void BOutput(const string &file1, const string &file2, vector<string> &X, vector<string> &Y, list<pair<int, int> > pairs)
 {
+	unsigned int i = 0; //index of X
+	unsigned int j = 0;	//index of Y
+
+	unsigned int diffI;
+	unsigned int diffJ;
+
+	for(list<pair<int,int> >::iterator it = pairs.begin();
+			it != pairs.end();
+			it++, i += diffI, j += diffJ)
+	{
+		diffI = it->first - i;
+		diffJ = it->second - j;
+
+		if (diffI > 1)
+		{
+			if (diffJ > 1)
+				standardChange(i, j, diffI, diffJ, it->first,it->second, X, Y);
+			else
+			{
+				size_t total_line_size = 0;
+				for (size_t k = it->first - 1; k > i; --k)
+					total_line_size += X.at(k - 1).length();
+				if (total_line_size > 0)
+					standardDelete(i, j, diffI, it->first, X);
+			}
+		}
+		else if (diffJ > 1)
+		{
+			size_t total_line_size = 0;
+			for (size_t k = it->second - 1; k > j; --k)
+				total_line_size += Y.at(k - 1).length();
+			if (total_line_size > 0)
+				standardAdd(i, j, diffJ, it->second, Y);
+		}
+	}
+
+
+	diffI = X.size() - i;
+	diffJ = Y.size() - j;
+
+	if(diffI > 0)
+	{
+		if(diffJ > 0)
+			standardChange(i, j, diffI, diffJ, X.size(), Y.size(), X, Y);
+		else
+		{
+			size_t total_line_size = 0;
+			for (size_t k = X.size(); k > i; --k)
+				total_line_size += X.at(k - 1).length();
+			if (total_line_size > 0)
+				standardDelete(i, j, diffI, X.size(), X);
+		}
+	}
+	else if(diffJ > 0)
+	{
+		size_t total_line_size = 0;
+		for (size_t k = Y.size(); k > j; --k)
+			total_line_size += Y.at(k - 1).length();
+		if (total_line_size > 0)
+			standardAdd(i, j, diffJ, Y.size() + 1, Y);
+	}
 }
 
 void QBOutput(const string &file1, const string &file2, vector<string> &X, vector<string> &Y, list<pair<int, int> > pairs)
 {
+	unsigned int i = 0; //index of X
+	unsigned int j = 0;	//index of Y
+
+	unsigned int diffI;
+	unsigned int diffJ;
+
+	for(list<pair<int,int> >::iterator it = pairs.begin();
+			it != pairs.end();
+			it++, i += diffI, j += diffJ)
+	{
+		diffI = it->first - i;
+		diffJ = it->second - j;
+
+		if (diffI > 1)
+		{
+			if (diffJ > 1)
+			{
+				cout << "Files " + file1 + " and " + file2 + " differ\n";
+				return;
+			}
+			else
+			{
+				size_t total_line_size = 0;
+				for (size_t k = it->first - 1; k > i; --k)
+					total_line_size += X.at(k - 1).length();
+				if (total_line_size > 0)
+				{
+					cout << "Files " + file1 + " and " + file2 + " differ\n";
+					return;
+				}
+			}
+		}
+		else if (diffJ > 1)
+		{
+			size_t total_line_size = 0;
+			for (size_t k = it->second - 1; k > j; --k)
+				total_line_size += Y.at(k - 1).length();
+			if (total_line_size > 0)
+			{
+				cout << "Files " + file1 + " and " + file2 + " differ\n";
+				return;
+			}
+		}
+	}
+
+
+	diffI = X.size() - i;
+	diffJ = Y.size() - j;
+
+	if(diffI > 0)
+	{
+		if(diffJ > 0)
+		{
+			cout << "Files " + file1 + " and " + file2 + " differ\n";
+			return;
+		}
+		else
+		{
+			size_t total_line_size = 0;
+			for (size_t k = X.size(); k > i; --k)
+				total_line_size += X.at(k - 1).length();
+			if (total_line_size > 0)
+			{
+				cout << "Files " + file1 + " and " + file2 + " differ\n";
+				return;
+			}
+		}
+	}
+	else if(diffJ > 0)
+	{
+		size_t total_line_size = 0;
+		for (size_t k = Y.size(); k > j; --k)
+			total_line_size += Y.at(k - 1).length();
+		if (total_line_size > 0)
+		{
+			cout << "Files " + file1 + " and " + file2 + " differ\n";
+			return;
+		}
+	}
 }
 
 bool standardCompare(const string &X, const string &Y)
 {
-	if (X.compare(Y) == 0)
-		return true;
-	else return false;
+	return X.compare(Y) == 0;
 }
 
 bool ICompare(const string &X, const string &Y)
@@ -188,22 +326,15 @@ bool IWCompare(const string &X, const string &Y)
 	while(i < X.size() || j < Y.size())
 	{
 		if(isspace(X[i]))
-		{
 			++i;
-			continue;
-		}
-
-		if(isspace(Y[j]))
-		{
+		else if(isspace(Y[j]))
 			++j;
-			continue;
-		}
-
-		if (tolower(X[i]) != tolower(Y[j]))
+		else if (tolower(X[i]) != tolower(Y[j]))
 			return false;
-
-		++i;
-		++j;
+		else
+		{	++i;
+			++j;
+		}
 	}
 
 	return i == X.size() && j == Y.size();
@@ -250,21 +381,21 @@ int main(int argc, char **argv)
 				for (size_t j = 1; j < arg.length(); ++j)
 					switch (arg.at(j))
 					{
-						case 'i':
-							Iflag = true;
-							break;
-						case 'w':
-							Wflag = true;
-							break;
-						case 'B':
-							Bflag = true;
-							break;
-						case 'q':
-							Qflag = true;
-							break;
-						default:
-							cout << "Unknown option: -" << arg.at(j) << endl;
-							exit(EXIT_FAILURE);
+					case 'i':
+						Iflag = true;
+						break;
+					case 'w':
+						Wflag = true;
+						break;
+					case 'B':
+						Bflag = true;
+						break;
+					case 'q':
+						Qflag = true;
+						break;
+					default:
+						cout << "Unknown option: -" << arg.at(j) << endl;
+						exit(EXIT_FAILURE);
 					}
 		}
 		else if (file1 == "")
