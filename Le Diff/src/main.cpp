@@ -273,9 +273,15 @@ int main(int argc, char **argv)
 			file2 = argv[i];
 		else
 		{
-			printf("Too many input files\n");
+			cout << "Too many input files" << endl;
 			exit(EXIT_FAILURE);
 		}
+	}
+
+	if (file1 == "" || file2 == "")
+	{
+		cout << "Two files required for comparison\n" << endl;
+		exit(EXIT_FAILURE);
 	}
 
 	StringCompare compare = standardCompare;
