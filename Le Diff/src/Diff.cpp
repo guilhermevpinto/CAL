@@ -117,22 +117,17 @@ bool WCompare(const string &X, const string &Y)
 	while(i < X.size() || j < Y.size())
 	{
 		if(isspace(X[i]))
+			++i;
+		else if(isspace(Y[j]))
+			++j;
+
+		else if(X[i] != Y[j])
+			return false;
+		else
 		{
 			++i;
-			continue;
-		}
-
-		if(isspace(Y[j]))
-		{
 			++j;
-			continue;
 		}
-
-		if(X[i] != Y[j])
-			return false;
-
-		++i;
-		++j;
 	}
 
 	return i == X.size() && j == Y.size();
@@ -152,7 +147,8 @@ bool IWCompare(const string &X, const string &Y)
 		else if (tolower(X[i]) != tolower(Y[j]))
 			return false;
 		else
-		{	++i;
+		{
+			++i;
 			++j;
 		}
 	}
