@@ -274,7 +274,7 @@ void QBOutput(const string &file1, const string &file2, vector<string> &X, vecto
 
 bool standardCompare(const string &X, const string &Y)
 {
-	return X.compare(Y) == 0;
+	return X == Y;
 }
 
 bool ICompare(const string &X, const string &Y)
