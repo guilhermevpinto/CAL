@@ -9,12 +9,7 @@
 #include "LCS.h"
 #include <fstream>
 
-#define FILE_EXTENSION ".txt"
-
 using namespace std;
-
-string file1 = "test1";
-string file2 = "test2";
 
 vector<string> loadFile(string filename)
 								{
@@ -35,7 +30,7 @@ vector<string> loadFile(string filename)
 		cout << "Failed to open " << filename << endl;
 
 	return result;
-								}
+}
 
 void standardAdd(unsigned int i, unsigned int j, int diffJ, unsigned int final_line, vector<string> &Y)
 {
@@ -82,7 +77,7 @@ void standardChange(unsigned int i, unsigned int j, int diffI, int diffJ, unsign
 /**
  * 	@brief Apresentacao da informacao adicionada, apagada e substituida entre os dois ficheiros.
  */
-void standardOutput(vector<string> &X, vector<string> &Y, list<pair<int, int> > pairs)
+void standardOutput(const string &file1, const string &file2, vector<string> &X, vector<string> &Y, list<pair<int, int> > pairs)
 {
 	unsigned int i = 0; //index of X
 	unsigned int j = 0;	//index of Y
@@ -90,24 +85,22 @@ void standardOutput(vector<string> &X, vector<string> &Y, list<pair<int, int> > 
 	unsigned int diffI;
 	unsigned int diffJ;
 
-	list<pair<int,int> >::iterator it = pairs.begin();
-
-	for(it; it != pairs.end(); it++, i += diffI, j += diffJ)
+	for(list<pair<int,int> >::iterator it = pairs.begin();
+		it != pairs.end();
+		it++, i += diffI, j += diffJ)
 	{
 		diffI = it->first - i;
 		diffJ = it->second - j;
 
-		if(diffI == 1)
+		if (diffI > 1)
 		{
-			if(diffJ == 1)
-				continue;
-
-			standardAdd(i, j, diffJ, it->second, Y);
+			if (diffJ > 1)
+				standardChange(i, j, diffI, diffJ, it->first,it->second, X, Y);
+			else
+				standardDelete(i, j, diffI, it->first, X);
 		}
-		else if(diffJ == 1)
-			standardDelete(i, j, diffI, it->first, X);
-		else
-			standardChange(i, j, diffI, diffJ, it->first,it->second, X, Y);
+		else if (diffJ > 1)
+			standardAdd(i, j, diffJ, it->second, Y);
 	}
 
 
@@ -123,24 +116,19 @@ void standardOutput(vector<string> &X, vector<string> &Y, list<pair<int, int> > 
 	}
 	else if(diffJ > 0)
 		standardAdd(i, j, diffJ, Y.size() +1, Y);
-	/*
-
-	list<pair<int,int> >::iterator it = pairs.begin();
-	for(it; it != pairs.end(); it++)
-		cout << it->first << ", " << it->second << endl;*/
 }
 
-void QOutput(vector<string> &X, vector<string> &Y, list<pair<int, int> > pairs)
+void QOutput(const string &file1, const string &file2, vector<string> &X, vector<string> &Y, list<pair<int, int> > pairs)
 {
 	if(pairs.size() != X.size() || pairs.size() != Y.size())
 		cout << "Files " + file1 + " and " + file2 + " differ\n";
 }
 
-void BOutput(vector<string> &X, vector<string> &Y, list<pair<int, int> > pairs)
+void BOutput(const string &file1, const string &file2, vector<string> &X, vector<string> &Y, list<pair<int, int> > pairs)
 {
 }
 
-void QBOutput(vector<string> &X, vector<string> &Y, list<pair<int, int> > pairs)
+void QBOutput(const string &file1, const string &file2, vector<string> &X, vector<string> &Y, list<pair<int, int> > pairs)
 {
 }
 
@@ -290,20 +278,6 @@ int main(int argc, char **argv)
 		}
 	}
 
-	string flags = "-wi";
-
-	for(size_t i = 1; i < flags.size(); ++i)
-	{
-		if(flags[i] == 'q')
-			Qflag = true;
-		else if (flags[i] == 'i')
-			Iflag = true;
-		else if(flags[i] == 'w')
-			Wflag = true;
-		else if (flags[i] == 'B')
-			Bflag = true;
-	}
-
 	StringCompare compare = standardCompare;
 	OutputDiff output = standardOutput;
 
@@ -322,12 +296,12 @@ int main(int argc, char **argv)
 		compare = ICompare;
 
 
-	vector<string> X = loadFile(file1 + FILE_EXTENSION);
-	vector<string> Y = loadFile(file2 + FILE_EXTENSION);
+	vector<string> X = loadFile(file1);
+	vector<string> Y = loadFile(file2);
 
 	list<pair<int,int> > pairs = lcs(X, Y, compare);
 
-	output(X, Y, pairs);
+	output(file1, file2, X, Y, pairs);
 	return 0;
 }
 
