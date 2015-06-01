@@ -120,7 +120,6 @@ bool WCompare(const string &X, const string &Y)
 			++i;
 		else if(isspace(Y[j]))
 			++j;
-
 		else if(X[i] != Y[j])
 			return false;
 		else
